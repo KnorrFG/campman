@@ -1,0 +1,50 @@
+#! /usr/bin/env raku
+
+my $root = $*PROGRAM.parent.parent.absolute;
+
+sub MAIN(Str $name) {
+  my $component-header = q:to/end/;
+    #![allow(non_snake_case)]
+    use dioxus::prelude::*;
+
+    pub fn Name(cx: Scope) -> Element {
+
+    }
+    end
+
+  my $cmp_path = "$root/src/components/{$name}.rs";
+  my $mod_path = "$root/src/components/mod.rs";
+  my $mod_ext = qq:to/end/;
+
+    mod $name;
+    pub use {$name}::*;
+    end
+
+  say qq:to/end/;
+    I'm about to create $cmp_path, and add
+    {$mod_ext.indent: 2}
+    to $mod_path
+
+    Do you want me to do this [Y/n]?
+    end
+
+  loop {
+    my $aw = $*IN.get;
+    given $aw {
+      when "y" | "Y" | "" {
+        last;
+      }
+      when "n" | "N" {
+        exit 0;
+      }
+      default {
+        note "\nPlease enter y or n";
+      }
+    }
+  }
+
+  $cmp_path.IO.spurt: $$component-header;
+  $mod_path.IO.spurt: $mod_ext, :append;
+  
+  say "Done";
+}
