@@ -6,6 +6,7 @@ use std::{
 };
 
 use anyhow::Context;
+use comrak::{markdown_to_html, ComrakOptions};
 use dioxus::prelude::*;
 use futures::{stream, StreamExt};
 use log::{debug, trace};
@@ -73,7 +74,7 @@ pub fn EditingSubject(cx: Scope, name: String) -> Element {
                                 sub.description = s.clone();
                                 coro_try!(state, db.update_subject(&sub));
                                 trace!("succesfully wrote to db");
-                                html.set(s);
+                                html.set(markdown_to_html(&s, &ComrakOptions::default()));
                                 is_err.set(false);
                             },
                             Some(Err(s)) => {

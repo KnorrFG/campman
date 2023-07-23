@@ -1,4 +1,22 @@
-[workspace]
+[package]
+name = "campman"
+version = "0.1.0"
+edition = "2021"
 
-members = ["core", "campman"]
-resolver = "2"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.71"
+comrak = "0.18.0"
+dioxus = { git = "https://github.com/DioxusLabs/dioxus" }
+dioxus-desktop = { git = "https://github.com/DioxusLabs/dioxus" }
+directories = "5.0.1"
+futures = "0.3.28"
+log = "0.4.19"
+persistent-structs = "0.1.1"
+pretty_env_logger = "0.5.0"
+rfd = "0.11.4"
+sqlite = { version = "0.31.0", features = ["bundled"] }
+tempfile = "3.6.0"
+thiserror = "1.0.43"
+tokio = { version = "1.29.1" }
