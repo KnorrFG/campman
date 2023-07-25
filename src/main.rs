@@ -59,8 +59,9 @@ fn Main(cx: Scope, mode: Mode) -> Element {
         Mode::Active(sub_mode) => {
             let Child = match sub_mode {
                 ActiveMode::Events => render! { components::Events {} },
+                ActiveMode::Search => render! { components::Search {} },
                 ActiveMode::NewSubject => render! { components::NewSubject {} },
-                ActiveMode::Subject(id) => render! { components::Subject {id: id.clone()} },
+                ActiveMode::Subject(name) => render! { components::Subject {name: name.clone()} },
             };
 
             render! {
@@ -90,16 +91,20 @@ fn Main(cx: Scope, mode: Mode) -> Element {
 pub fn TwoColLayout<'a>(cx: Scope<'a>, sidebar: Element<'a>, main: Element<'a>) -> Element<'a> {
     render! {
          div {
+            // style: "outline: 2px solid black;",
             display: "flex",
             align_items: "stretch",
+            justify_items: "stretch",
             width: "100%",
             height: "100%",
             div {
-                width: "15%",
-                max_width: "15em",
+                // style: "outline: 2px solid red;",
+                flex: "0 1 15%",
+                max_width: "12em",
                 sidebar
             },
             div {
+                // style: "outline: 2px solid black;",
                 flex: 1,
                 overflow: "auto",
                 main

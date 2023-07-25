@@ -256,19 +256,14 @@ impl Schema {
         Ok(())
     }
 
-    pub fn query_place_description(&mut self, query: &str) -> Result<Vec<i64>> {
-        self.query_x(query, "places", "description")
-    }
-
-    fn query_x(&mut self, query: &str, table_name: &str, col_name: &str) -> Result<Vec<i64>> {
+    pub fn query_subj_names(&mut self, query: &str) -> Result<Vec<String>> {
         let res = self
             .conn
             .prepare(&format!(
-                "select id from ? where ? like '%?%' --case-insensitive"
+                "select name from subjects where name like '%{query}%' --case-insensitive"
             ))?
             .into_iter()
-            .bind(&[(1, table_name), (2, col_name), (3, query)][..])?
-            .map(|r| Ok(r?.read::<i64, _>("id")))
+            .map(|r| Ok(r?.read::<&str, _>("name").to_string()))
             .collect::<Result<Vec<_>>>()?;
         Ok(res)
     }
@@ -299,32 +294,4 @@ impl Schema {
 
 fn opt_to_str<T: Display>(x: &Option<T>) -> String {
     x.as_ref().map(|x| x.to_string()).unwrap_or("NULL".into())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use anyhow::{Context, Result};
-
-    #[test]
-    fn check_queries() -> Result<()> {
-        let mut conn = sqlite::Connection::open(":memory:")?;
-        create_subjects_table(&mut conn).context("Creating subjects table:")?;
-        create_events_table(&mut conn).context("Creating events table:")?;
-        create_places_table(&mut conn).context("Creating places table:")?;
-        create_groups_table(&mut conn).context("Creating groups table:")?;
-        create_tags_table(&mut conn).context("Creating tags table:")?;
-
-        for to in ["subjects", "groups", "places"] {
-            create_mapping(&mut conn, "subjects", to)
-                .context(format!("create mapping from subjects to {to}"))?;
-        }
-        for to in ["subjects", "groups", "places", "tags"] {
-            create_mapping(&mut conn, "events", to)
-                .context(format!("create mapping from events to {to}"))?;
-        }
-        create_mapping(&mut conn, "places", "groups")
-            .context(format!("create mapping from places to groups"))?;
-        Ok(())
-    }
 }

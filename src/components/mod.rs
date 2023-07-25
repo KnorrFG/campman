@@ -28,3 +28,9 @@ pub use editing_subject::*;
 
 mod subject;
 pub use subject::*;
+
+mod search;
+pub use search::*;
+
+mod bimg;
+pub use bimg::*;

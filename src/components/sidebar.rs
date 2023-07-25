@@ -6,6 +6,7 @@ use log::debug;
 use crate::{components::button::SecondaryButton, ActiveMode, Mode, State};
 
 pub fn Sidebar(cx: Scope) -> Element {
+    let state = use_shared_state::<State>(cx).unwrap();
     cx.render(rsx!(div {
         style: "
             background-color: #26B3D1;
@@ -21,7 +22,13 @@ pub fn Sidebar(cx: Scope) -> Element {
             height: 100%;
         ",
         NewButtons {},
-        SecondaryButton { onclick: |_| {}, "Search" },
+        SecondaryButton {
+            onclick: move |_| {
+                debug!("Search Clicked");
+                state.write().mode = Mode::Active(ActiveMode::Search);
+            },
+            "Search"
+        },
         SecondaryButton { onclick: |_| {}, "Help" },
     }))
 }
